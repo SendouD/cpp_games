@@ -54,7 +54,7 @@ void printui()
         }
         cout << "\n";
     }
-    cout << "n=new game ,w=up ,s=down ,a=left,d=right\n";
+    cout << "n=new game,q=Quitting,w=up ,s=down ,a=left,d=right\n";
 }
 bool canmove(int row,int column,int nextrow,int nextcolumn){
     if(nextrow<0||nextcolumn<0||nextrow>=4||nextcolumn>=4||board[row][column]!=board[nextrow][nextcolumn]&&board[nextrow][nextcolumn]!=0){
@@ -77,24 +77,53 @@ if(dir==1){
     startcolumn=3;
     column=-1;
 }
-int movepossible=0;
+int movepossible=0,canmovepossible=0;
+do{
+movepossible=0;
 for(int i=startrow;i>=0 && i<4;i+=row){
     for(int j=startcolumn;j>=0 && j<4;j+=column){
         int nexti=i+dirrow[dir];
         int nextj=j+dircol[dir ];
-        if(canmove(i,j,nexti,nextj)){
+        if(board[i][j]&&canmove(i,j,nexti,nextj)){
             board[nexti][nextj]+=board[i][j];
                board[i][j]=0;
-                movepossible=1;
+                movepossible=canmovepossible=1;
         };
      
 
 
     }
-}
-if(movepossible==1){
+}}while(movepossible);
+if(canmovepossible ==1){
     rg();
 }
+}
+bool isGameOver()
+{
+   
+    for (int dir = 0; dir < 4; ++dir)
+    {
+        int startrow = (dir == 2) ? 3 : 0;
+        int startcolumn = (dir == 3) ? 3 : 0;
+        int row = (dir == 0 || dir == 2) ? -1 : 1;
+        int column = (dir == 1 || dir == 3) ? -1 : 1;
+
+        for (int i = startrow; i >= 0 && i < 4; i += row)
+        {
+            for (int j = startcolumn; j >= 0 && j < 4; j += column)
+            {
+                int nexti = i + dirrow[dir];
+                int nextj = j + dircol[dir];
+
+                if (canmove(i, j, nexti, nextj))
+                {
+                    return false; 
+                }
+            }
+        }
+    }
+
+    return true; 
 }
 
 int main()
@@ -106,7 +135,7 @@ int main()
     {   
         printui();
        char ch;
-        cin >> ch;
+        ch=_getch();
         int direction = 0;
         if (ch == 'n')
         {
@@ -130,10 +159,16 @@ int main()
                 direction = 1;
                 break;
             case 'q':
-                cout << "Game over. Quitting...\n";
+                cout << "sssQuitting...\n";
                 return 0;
             }
             move(direction);
+        if (isGameOver())
+        {
+            printui();
+            cout << "You LOOSE !!!. You DUMBASS!!!!\n";
+            return 0;
+        }
         }
     }
 }
